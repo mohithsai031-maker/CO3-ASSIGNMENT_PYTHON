@@ -1,0 +1,38 @@
+# Nested Dictionary Timetable Structure
+timetable = {
+    "12635": {
+        "name": "Vaigai Express",
+        "schedule": [
+            ("Chennai Egmore", "06:50", "07:00"),
+            ("Tambaram", "07:23", "07:25"),
+            ("Villupuram", "09:20", "09:25"),
+        ],
+        "days": {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"},
+    },
+    "12605": {
+        "name": "Pallavan Express",
+        "schedule": [
+            ("Chennai Egmore", "15:35", "15:45"),
+            ("Tambaram", "16:08", "16:10"),
+            ("Villupuram", "18:00", "18:05"),
+        ],
+        "days": {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"},
+    },
+}
+
+
+# Query function: Find all trains stopping at a given station on a given day, sorted by departure time
+def query_station(station_name, day):
+  results = []
+  for train_no, data in timetable.items():
+    if day in data["days"]:
+      for stop, arr, dep in data["schedule"]:
+        if stop == station_name:
+          results.append((train_no, data["name"], dep))
+          break
+  # Sort by departure time string
+  return sorted(results, key=lambda x: x[2])
+
+
+print("Trains at Tambaram on Wednesday:")
+print(query_station("Tambaram", "Wed"))
