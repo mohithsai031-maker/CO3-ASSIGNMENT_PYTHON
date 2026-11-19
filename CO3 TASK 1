@@ -1,0 +1,60 @@
+import random
+import time
+
+# Generate 365 daily rainfall readings (e.g., between 0 and 50 mm)
+random.seed(42)
+readings = [random.choice([0] + [random.randint(1, 45)] * 4) for _ in range(365)]
+
+
+# 1. Weekly Totals using Slicing
+def get_weekly_totals(data):
+  # Sum every chunk of 7 days
+  return [sum(data[i : i + 7]) for i in range(0, len(data), 7)]
+
+
+weekly_totals = get_weekly_totals(readings)
+
+
+# 2. Maximum and Minimum with Positions
+def find_extremes(data):
+  if not data:
+    return None, None, None, None
+  max_val = max(data)
+  min_val = min(data)
+  max_pos = data.index(max_val)
+  min_pos = data.index(min_val)
+  return max_val, max_pos, min_val, min_pos
+
+
+max_rain, max_day, min_rain, min_day = find_extremes(readings)
+
+
+# 3. 7-Day Moving Average
+# Naive approach
+def moving_average_naive(data, window=7):
+  if len(data) < window:
+    return []
+  return [
+    sum(data[i : i + window]) / window for i in range(len(data) - window + 1)
+  ]
+
+
+# Running sum (efficient) approach
+def moving_average_running_sum(data, window=7):
+  if len(data) < window:
+    return []
+  window_sum = sum(data[:window])
+  result = [window_sum / window]
+  for i in range(len(data) - window):
+    window_sum = window_sum - data[i] + data[i + window]
+    result.append(window_sum / window)
+  return result
+
+
+# 4. List dry days (0 mm)
+dry_days = [day for day, val in enumerate(readings) if val == 0]
+
+print(f"Total Readings: {len(readings)}")
+print(f"Max Rainfall: {max_rain} mm on Day {max_day}")
+print(f"Min Rainfall: {min_rain} mm on Day {min_day}")
+print(f"Dry days count: {len(dry_days)}")
