@@ -1,0 +1,24 @@
+# Sample cold-storage temperature readings (including invalid outliers)
+raw_readings = [4, 5, 52, 6, -55, 3, 7, 8, 90, 5, 2]
+
+# 1. For loop with append
+valid_celsius_loop = []
+for temp in raw_readings:
+  if -50 <= temp <= 50:
+    valid_celsius_loop.append(temp)
+
+# 2. List comprehension with condition (Celsius & Fahrenheit conversion)
+valid_celsius_comp = [temp for temp in raw_readings if -50 <= temp <= 50]
+fahrenheit_comp = [(c * 9 / 5) + 32 for c in valid_celsius_comp]
+
+# 3. Alarm minutes (outside 2-8 °C range, ignoring sensor errors)
+alarm_minutes = [
+    minute
+    for minute, temp in enumerate(raw_readings)
+    if (-50 <= temp <= 50) and not (2 <= temp <= 8)
+]
+
+print("Valid Readings (Loop):", valid_celsius_loop)
+print("Valid Readings (Comp):", valid_celsius_comp)
+print("Fahrenheit Equivalent:", fahrenheit_comp)
+print("Alarm Minutes (not in 2-8 range):", alarm_minutes)
