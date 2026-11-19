@@ -1,0 +1,49 @@
+import re
+
+# Sample raw contacts from multiple sources with variations
+contacts_source_1 = [
+    {"name": "Dr. Ravi", "phone": "+91 98400 12345", "email": "ravi@gmail.com"},
+    {"name": "Anita", "phone": "9840055555", "email": "anita@yahoo.com"},
+]
+
+contacts_source_2 = [
+    {"name": "ravi kumar", "phone": "98400-12345", "email": "ravi.work@office.com"},
+    {"name": "Anita M", "phone": "+919840055555", "email": "anita@yahoo.com"},
+]
+
+
+def normalize_phone(phone_str):
+  # Keep only digits, take the last 10 digits to handle country code discrepancies (+91)
+  digits = re.sub(r"\D", "", phone_str)
+  return digits[-10:]
+
+
+def merge_contacts(sources):
+  master_db = {}
+  for source in sources:
+    for contact in source:
+      norm_phone = normalize_phone(contact["phone"])
+
+      if norm_phone not in master_db:
+        master_db[norm_phone] = {
+            "names": {contact["name"]},
+            "phones": {contact["phone"]},
+            "emails": {contact["email"]} if contact.get("email") else set(),
+        }
+      else:
+        master_db[norm_phone]["names"].add(contact["name"])
+        master_db[norm_phone]["phones"].add(contact["phone"])
+        if contact.get("email"):
+          master_db[norm_phone]["emails"].add(contact["email"])
+
+  return master_db
+
+
+merged_result = merge_contacts([contacts_source_1, contacts_source_2])
+
+for phone, info in merged_result.items():
+  print(f"Primary Key (Phone): {phone}")
+  print(f"  Names  : {info['names']}")
+  print(f"  Phones : {info['phones']}")
+  print(f"  Emails : {info['emails']}")
+  print("-" * 30)
